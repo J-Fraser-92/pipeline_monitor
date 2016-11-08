@@ -1,0 +1,22 @@
+<% content_for :title do %>TeamCity Status<% end %>
+<div class="gridster">
+  <ul>
+
+    <li data-row="1" data-col="1" data-sizex="15" data-sizey="16">
+      <div data-id="code_coverage_c" data-view="Coverage" data-title="Class Coverage" data-min="0" data-max="100" data-suffix="%"></div>
+    </li>
+
+    <li data-row="1" data-col="16" data-sizex="15" data-sizey="16">
+      <div data-id="code_coverage_m" data-view="Coverage" data-title="Method Coverage" data-min="0" data-max="100" data-suffix="%"></div>
+    </li>
+
+    <li data-row="1" data-col="31" data-sizex="15" data-sizey="16">
+      <div data-id="code_coverage_s" data-view="Coverage" data-title="Statement Coverage" data-min="0" data-max="100" data-suffix="%"></div>
+    </li>
+
+    <li data-row="1" data-col="46" data-sizex="15" data-sizey="16">
+      <div data-id="unittest_count" data-view="Number" data-title="Unit Test Count"></div>
+    </li>
+
+  </ul>
+</div>
