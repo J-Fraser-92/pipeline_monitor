@@ -11,7 +11,7 @@ builds = {
     :live_us => {:teamcity_id => 'DeployToProductionUs'}
 }
 
-SCHEDULER.every '1m' do
+SCHEDULER.every '10s' do
 
         ci_json = get_latest_completed_build_json(builds[:ci][:teamcity_id])
         live_uk_json = get_latest_completed_build_json(builds[:live_uk][:teamcity_id])
@@ -51,6 +51,14 @@ SCHEDULER.every '1m' do
 
         send_event('uk_deploy_delta', {text: uk_deploy_delta})
         send_event('us_deploy_delta', {text: us_deploy_delta})
+
+
+        mins_since_uk_deploy = (now - live_uk_deploy_time).to_i / 60
+        mins_since_us_deploy = (now - live_us_deploy_time).to_i / 60
+
+        send_event('uk_fixed_bugs_delta', {current: get_number_of_fixed_bugs_since(mins_since_uk_deploy)})
+        send_event('us_fixed_bugs_delta', {current: get_number_of_fixed_bugs_since(mins_since_us_deploy)})
+
 end
 
 

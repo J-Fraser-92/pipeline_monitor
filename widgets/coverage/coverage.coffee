@@ -2,19 +2,19 @@ class Dashing.Coverage extends Dashing.Widget
 
   @accessor 'value', Dashing.AnimatedValue
 
+
   @accessor 'difference', ->
-    if @get('last')
-      last = parseInt(@get('last'))
-      value = parseInt(@get('value'))
-      if last != 0
-        diff = Math.abs(Math.round(value - last))
-        "#{diff}"
+    if @get('delta')
+      diff = Math.abs(@get('delta'))
+      "#{diff}"
     else
-      ""
+      "0"
 
   @accessor 'arrow', ->
-    if @get('last')
-      if parseInt(@get('value')) >= parseInt(@get('last')) then 'fa fa-arrow-up' else 'fa fa-arrow-down'
+    if @get('delta')
+      if parseInt(@get('delta')) >= 0 then 'fa fa-arrow-up' else 'fa fa-arrow-down'
+    else
+      'fa fa-arrow-up'
 
   constructor: ->
     super

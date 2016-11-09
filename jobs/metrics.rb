@@ -12,20 +12,22 @@ SCHEDULER.every '30s' do
     current_build_num = get_latest_build($build_data).to_i
 
     if (build_num > current_build_num)
+
         stats = get_teamcity_json('/builds/id:%s/statistics' % [build_id])['property']
 
         total_tests = stats[stats.index {|h| h['name'] == 'TotalTestCount' }]['value'].to_i
         passed_tests = stats[stats.index {|h| h['name'] == 'PassedTestCount' }]['value'].to_i
         ignored_tests = stats[stats.index {|h| h['name'] == 'IgnoredTestCount' }]['value'].to_i
 
-        code_coverage_c = stats[stats.index {|h| h['name'] == 'CodeCoverageC' }]['value'].to_i
-        code_coverage_m = stats[stats.index {|h| h['name'] == 'CodeCoverageM' }]['value'].to_i
-        code_coverage_s = stats[stats.index {|h| h['name'] == 'CodeCoverageS' }]['value'].to_i
+        code_coverage_c = stats[stats.index {|h| h['name'] == 'CodeCoverageC' }]['value'].to_f.round(2)
+        code_coverage_m = stats[stats.index {|h| h['name'] == 'CodeCoverageM' }]['value'].to_f.round(2)
+        code_coverage_s = stats[stats.index {|h| h['name'] == 'CodeCoverageS' }]['value'].to_f.round(2)
+
 
         send_event('unittest_count', {current: passed_tests, last: $build_data[current_build_num][:unit_tests]})
-        send_event('code_coverage_c', {value: code_coverage_c, last: $build_data[current_build_num][:class_coverage]})
-        send_event('code_coverage_m', {value: code_coverage_m, last: $build_data[current_build_num][:method_coverage]})
-        send_event('code_coverage_s', {value: code_coverage_s, last: $build_data[current_build_num][:statement_coverage]})
+        send_event('code_coverage_c', {value: code_coverage_c.round, delta: (code_coverage_c - $build_data[current_build_num][:class_coverage])})
+        send_event('code_coverage_m', {value: code_coverage_m.round, delta: (code_coverage_m - $build_data[current_build_num][:method_coverage])})
+        send_event('code_coverage_s', {value: code_coverage_s.round, delta: (code_coverage_s - $build_data[current_build_num][:statement_coverage])})
 
         $build_data[build_num] = {
             :unit_tests => passed_tests,

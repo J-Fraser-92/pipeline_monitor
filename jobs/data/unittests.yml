@@ -236,6 +236,61 @@
   :statement_coverage: 38
 5526:
   :unit_tests: 2641
-  :class_coverage: 47
-  :method_coverage: 39
-  :statement_coverage: 38
+  :class_coverage: 47.69
+  :method_coverage: 39.01
+  :statement_coverage: 38.43
+5528:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5529:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5530:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5532:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5533:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5534:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5535:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.43
+5536:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.44
+5538:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.44
+5539:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.44
+5540:
+  :unit_tests: 2641
+  :class_coverage: 47.69
+  :method_coverage: 38.99
+  :statement_coverage: 38.44

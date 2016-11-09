@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'net/https'
 
 def format_time(time)
     return Time.parse(time).strftime("%d/%m/%y %H:%M")
@@ -9,13 +10,31 @@ def get_latest_build(build_data)
     return build_data.keys.max
 end
 
+def get_jira_json(json_body)
+    uri = URI.parse('https://xedosoftware.atlassian.net/rest/api/2/search/')
+
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.use_ssl = true
+    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    req = Net::HTTP::Post.new(uri.path)
+    req['Authorization'] = 'Basic amFtZXMuZnJhc2VyQHhlZG9zb2Z0d2FyZS5jb206U3RhcmsxVWx0cm9uMUh1bGs='
+    req['Accept'] = 'application/json'
+    req['Content-Type'] = 'application/json'
+
+    req.body = json_body
+
+    res = https.request(req)
+
+    return JSON.parse(res.body)
+end
+
 def get_teamcity_json(url)
-    url = URI.parse('http://xedo-tfsbuild:90/httpAuth/app/rest' + url)
-    req = Net::HTTP::Get.new(url.to_s)
+    uri = URI.parse('http://xedo-tfsbuild:90/httpAuth/app/rest' + url)
+    req = Net::HTTP::Get.new(uri.to_s)
     req['Authorization'] = 'Basic amFtZXNmcmFzZXI6U3RhcmsxVWx0cm9uMUh1bGs='
     req['Accept'] = 'application/json'
 
-    res = Net::HTTP.start(url.host, url.port) {|http|
+    res = Net::HTTP.start(uri.host, uri.port) {|http|
         http.request(req)
     }
 
@@ -48,6 +67,19 @@ def get_ci_build_json(build_type)
     return get_teamcity_json('/builds/id:%s' % [build_id])
 end
 
+def get_number_of_fixed_bugs_since(minutes)
+
+    jql = "issuetype=Bug&status changed from ('Backlog', 'Bucket', 'In Progress') to ('Release Ready', 'Done', 'Bug Vault') after -%sm" % [minutes]
+    json_body = {
+        "jql": jql,
+        "startAt": 0,
+        "fields": ["key"]
+    }
+
+    json = get_jira_json(JSON.generate(json_body))
+    return json['total']
+end
+
 def seconds_to_string(seconds)
     one_minute = 60
     one_hour = 60 * one_minute
@@ -76,12 +108,14 @@ def seconds_to_string(seconds)
         elsif days == 1
             return '%s day' % [days]
         end
-    else seconds >= one_hour
-        hours = (seconds / one_day).floor
+    else
+        hours = (seconds / one_hour).floor
         if hours > 1
             return '%s hours' % [hours]
         elsif hours == 1
-            return '%s hour' % [hours]
+            return '1 hour'
+        else
+            return '<1 hour'
         end
     end
 end
