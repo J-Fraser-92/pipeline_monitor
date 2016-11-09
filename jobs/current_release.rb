@@ -46,11 +46,11 @@ SCHEDULER.every '10s' do
         live_uk_deploy_time = Time.parse(live_uk_json['finishDate'])
         live_us_deploy_time = Time.parse(live_us_json['finishDate'])
 
-        uk_deploy_delta = seconds_to_string((now - live_uk_deploy_time).to_i)
-        us_deploy_delta = seconds_to_string((now - live_us_deploy_time).to_i)
+        uk_deploy_delta = (now - live_uk_deploy_time).to_i
+        us_deploy_delta = (now - live_us_deploy_time).to_i
 
-        send_event('uk_deploy_delta', {text: uk_deploy_delta})
-        send_event('us_deploy_delta', {text: us_deploy_delta})
+        send_event('uk_deploy_delta', {seconds: uk_deploy_delta})
+        send_event('us_deploy_delta', {seconds: us_deploy_delta})
 
 
         mins_since_uk_deploy = (now - live_uk_deploy_time).to_i / 60
