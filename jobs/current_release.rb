@@ -11,7 +11,7 @@ builds = {
     :live_us => {:teamcity_id => 'DeployToProductionUs'}
 }
 
-SCHEDULER.every '10s' do
+SCHEDULER.every '10s', :first_in => 1 do
 
         ci_json = get_latest_completed_build_json(builds[:ci][:teamcity_id])
         live_uk_json = get_latest_completed_build_json(builds[:live_uk][:teamcity_id])
@@ -32,8 +32,8 @@ SCHEDULER.every '10s' do
 
 
         ci_test_count = ci_json['testOccurrences']['passed'].to_i
-        live_uk_test_count = live_uk_ci_json['testOccurrences']['passed'].to_i
-        live_us_test_count = live_us_ci_json['testOccurrences']['passed'].to_i
+        live_uk_test_count = (live_uk_ci_json['testOccurrences']['count'].to_i - live_uk_ci_json['testOccurrences']['ignored'].to_i)
+        live_us_test_count = (live_us_ci_json['testOccurrences']['count'].to_i - live_us_ci_json['testOccurrences']['ignored'].to_i)
 
         uk_test_count_delta = (ci_test_count - live_uk_test_count)
         us_test_count_delta = (ci_test_count - live_us_test_count)
@@ -58,6 +58,14 @@ SCHEDULER.every '10s' do
 
         send_event('uk_fixed_bugs_delta', {current: get_number_of_fixed_bugs_since(mins_since_uk_deploy)})
         send_event('us_fixed_bugs_delta', {current: get_number_of_fixed_bugs_since(mins_since_us_deploy)})
+
+
+
+        uk_changed_files = get_changed_files(live_uk_ci_json['id'])
+        us_changed_files = get_changed_files(live_us_ci_json['id'])
+
+        send_event('uk_files_changed', {current: uk_changed_files.length})
+        send_event('us_files_changed', {current: us_changed_files.length})
 
 end
 

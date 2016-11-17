@@ -79,3 +79,37 @@ def get_number_of_fixed_bugs_since(minutes)
     json = get_jira_json(JSON.generate(json_body))
     return json['total']
 end
+
+def get_changed_files(build_id)
+    url = '/builds/id:%s' % [build_id]
+    change_id = get_teamcity_json(url)['lastChanges']['change'][0]['id']
+
+    json = get_teamcity_json('/changes?fields=change(files(count,file(file))),nextHref&locator=buildType:SortMyTux_CurrentSprint_BuildAndTest,sinceChange:(id:%s)' % [change_id])
+
+    hasData = true
+    all_changed_files = []
+    while hasData do
+        all_changes = json['change']
+
+        all_changes.each do |change|
+           changed_files = change['files']['file']
+
+            changed_files.each do |file|
+                if !file['file'].include? "SMT.Support"
+                    all_changed_files << file['file']
+                end
+            end
+        end
+
+        if json.key?('nextHref')
+            nextHref = json['nextHref']
+            nextHref['/httpAuth/app/rest'] = ''
+            json = get_teamcity_json(nextHref)
+        else
+            hasData = false
+        end
+
+    end
+
+    return all_changed_files.uniq
+end

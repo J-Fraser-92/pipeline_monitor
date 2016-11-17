@@ -6,6 +6,8 @@ class Dashing.Coverage extends Dashing.Widget
   @accessor 'difference', ->
     if @get('delta')
       diff = Math.abs(@get('delta'))
+      diff = Math.round(diff * 100)
+      diff = diff / 100
       "#{diff}"
     else
       "0"

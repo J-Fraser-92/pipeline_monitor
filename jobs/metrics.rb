@@ -24,13 +24,13 @@ SCHEDULER.every '30s' do
         code_coverage_s = stats[stats.index {|h| h['name'] == 'CodeCoverageS' }]['value'].to_f.round(2)
 
 
-        send_event('unittest_count', {current: passed_tests, last: $build_data[current_build_num][:unit_tests]})
-        send_event('code_coverage_c', {value: code_coverage_c.round, delta: (code_coverage_c - $build_data[current_build_num][:class_coverage])})
-        send_event('code_coverage_m', {value: code_coverage_m.round, delta: (code_coverage_m - $build_data[current_build_num][:method_coverage])})
-        send_event('code_coverage_s', {value: code_coverage_s.round, delta: (code_coverage_s - $build_data[current_build_num][:statement_coverage])})
+        send_event('unittest_count', {current: (total_tests - ignored_tests), last: $build_data[current_build_num][:unit_tests]})
+        send_event('code_coverage_c', {value: code_coverage_c.round, delta: (code_coverage_c - $build_data[current_build_num][:class_coverage]).round(2)})
+        send_event('code_coverage_m', {value: code_coverage_m.round, delta: (code_coverage_m - $build_data[current_build_num][:method_coverage]).round(2)})
+        send_event('code_coverage_s', {value: code_coverage_s.round, delta: (code_coverage_s - $build_data[current_build_num][:statement_coverage]).round(2)})
 
         $build_data[build_num] = {
-            :unit_tests => passed_tests,
+            :unit_tests => (total_tests - ignored_tests),
             :class_coverage => code_coverage_c,
             :method_coverage => code_coverage_m,
             :statement_coverage => code_coverage_s
